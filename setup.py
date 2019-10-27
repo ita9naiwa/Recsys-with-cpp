@@ -10,7 +10,7 @@ ext_modules=[Extension(
                 sources=["_solver.pyx", "lib/solver.cpp"],
                 language='c++',
                 include_dirs=["submodule/eigen", "./"] + [numpy_include_dirs],
-                extra_compile_args=['-std=c++14']),
+                extra_compile_args=['-std=c++14', '-fopenmp', '-lpthread']),
             ]
 
 
