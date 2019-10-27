@@ -6,12 +6,17 @@ class RecBase(object):
     def __init__(self):
         pass
 
+    def init_params(self, n_users, n_items):
+        self.U = np.random.normal(loc=0, scale=0.01, size=(n_users, self.n_factors)).astype(np.float32)
+        self.I = np.random.normal(loc=0, scale=0.01, size=(n_items, self.n_factors)).astype(np.float32)
+        self.solver.init_params(self.U, self.I)
+        self.init = True
+
     def recommend(self, user_id, user_items, N=10):
         user = self.U[user_id]
 
         liked = set()
         liked.update(user_items[user_id].indices)
-        # calculate the top N items, removing the users own liked items from the results
         scores = self.I.dot(user)
         count = N + len(liked)
         if count < len(scores):

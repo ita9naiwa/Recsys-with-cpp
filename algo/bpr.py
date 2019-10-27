@@ -1,5 +1,5 @@
 import numpy as np
-import algo.solver
+import algo.cbpr
 from .recbase import RecBase
 
 
@@ -21,7 +21,7 @@ class BPR(RecBase):
         if num_threads <= 0:
             num_threads = 1
 
-        self.solver = algo.solver.CSolver(self.lr, self.reg_u, self.reg_i, self.num_threads, seed)
+        self.solver = algo.cbpr.BPR_solver(self.lr, self.reg_u, self.reg_i, self.num_threads, seed)
         self.init = False
 
     def init_params(self, n_users, n_items):
