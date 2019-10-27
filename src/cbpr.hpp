@@ -8,15 +8,12 @@
 #include "util.hpp"
 #include "rec_base.hpp"
 
-using namespace Eigen;
-
-
 
 namespace Algo{
     class CBPR: public RecBase{
     public:
         CBPR(float lr, float reg_u, float reg_i, int num_threads, int seed);
-        ~CBPR();
+        ~CBPR() = default;
         void init();
         void init_params(float* U, float* I, int n_users, int n_items, int n_factors);
         float fit(int* indices, int* indptr, int* rows, int* cols, int nnz);

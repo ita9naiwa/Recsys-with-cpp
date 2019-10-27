@@ -25,11 +25,6 @@ CBPR::CBPR(float lr, float reg_u, float reg_i, int num_threads, int seed)
 
 };
 
-CBPR::~CBPR(){
-    new (&_U) Map<rowMatrix>(nullptr, 0, 0);
-    new (&_I) Map<rowMatrix>(nullptr, 0, 0);
-}
-
 void CBPR::init_params(float* U, float* I, int n_users, int n_items, int n_factors){
     RecBase::init_params(_U, _I, U, I, n_users, n_items, n_factors);
 }

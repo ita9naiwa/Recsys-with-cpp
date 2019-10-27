@@ -21,11 +21,6 @@ CALS::CALS(float alpha, float reg_u, float reg_i, int num_threads, int seed)
 
 };
 
-CALS::~CALS(){
-    new (&_U) Map<rowMatrix>(nullptr, 0, 0);
-    new (&_I) Map<rowMatrix>(nullptr, 0, 0);
-}
-
 void CALS::init_params(float* U, float* I, int n_users, int n_items, int n_factors){
     RecBase::init_params(_U, _I, U, I, n_users, n_items, n_factors);
     _n_users = n_users;
@@ -53,8 +48,8 @@ float CALS::update(int* indices, int* indptr, float* data, bool item_side){
 
         rowMatrix temp(num_pos_items, n_factors);
         rowMatrix temp2(num_pos_items, n_factors);
-
         colVector y(n_factors, 1);
+
         temp.setZero();
         temp2.setZero();
         y.setZero();
