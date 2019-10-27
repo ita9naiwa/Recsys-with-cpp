@@ -42,6 +42,5 @@ class BPR(RecBase):
         _coo = user_items.tocoo()
         cols = _coo.col
         rows = _coo.row
-        nnz = _coo.nnz
         for iter in range(num_iters):
-            self.solver.fit(indices, indptr, rows, cols, nnz)
+            self.solver.fit(indices, indptr, rows, cols, len(cols))

@@ -32,31 +32,35 @@ float CBPR::fit(int* indices, int* indptr, int* rows, int* cols, int nnz){
 
     // set random number generator
     for(int i = 0; i < _num_threads; ++i)
-        _rng_neg_items.push_back(std::uniform_int_distribution<int>(0, nnz));
+        _rng_neg_items.push_back(std::uniform_int_distribution<int>(0, nnz - 1 ));
     //모든 유저를 빠짐없이 순회하기 위해서 셔플 수행
     auto _idx_map = std::vector<int>(nnz);
     std::iota(_idx_map.begin(), _idx_map.end(), 0);
     std::random_shuffle(_idx_map.begin(), _idx_map.end());
 
-    #pragma omp parallel for default(shared) num_threads(_num_threads)
+    #pragma omp parallel for default(shared) schedule(dynamic, 4)
     for(int _idx = 0; _idx < nnz; ++_idx){
         auto idx = _idx_map[_idx];
         auto u = rows[idx];
         auto i_p = cols[idx];
-        int tid = omp_get_thread_num();
 
-        auto i_n = cols[_rng_neg_items[tid](RNG[tid])];
-        while(std::binary_search(indices + indptr[u], indices + indptr[u+1], i_n))
+        int tid = omp_get_thread_num();
+        int i_n = cols[_rng_neg_items[tid](RNG[tid])];
+        while(std::binary_search(indices + indptr[u], indices + indptr[u+1], i_n)){
             i_n = cols[_rng_neg_items[tid](RNG[tid])];
+        }
+
         auto diff = _I.row(i_p) - _I.row(i_n);
         float x_uij = (_U.row(u) * (_I.row(i_p) - _I.row(i_n)).transpose())(0, 0);
         auto sigmoid = 1 / ( 1 + exp(x_uij));
+
         #pragma omp critical
         {
             _U.row(u) += _lr * (sigmoid * diff - _reg_u * _U.row(u));
             _I.row(i_p) += _lr * (sigmoid * _U.row(u) - _reg_i * _I.row(i_p));
             _I.row(i_n) += _lr * (sigmoid * (-_U.row(u)) - _reg_i * _I.row(i_n));
         }
+
         // TODO: Add loss calculation and accumulation
     }
 
