@@ -67,8 +67,6 @@ float CALS::update(int* indices, int* indptr, float* data, bool item_side){
             YtCY(d, d) += reg;
         cg.setMaxIterations(3).compute(YtCY);
         U.row(u).noalias() = cg.solve(y);
-
-
     }
 
    return 0.0;
